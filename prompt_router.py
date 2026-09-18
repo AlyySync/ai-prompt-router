@@ -1,6 +1,7 @@
 """Deterministic prompt routing for small AI automations."""
 
 from dataclasses import dataclass
+import json
 import re
 import sys
 
@@ -10,6 +11,10 @@ class Route:
     task: str
     system_prompt: str
     confidence: float
+
+    def as_dict(self):
+        """Return a JSON-serializable decision for workflow nodes."""
+        return {"task": self.task, "system_prompt": self.system_prompt, "confidence": self.confidence}
 
 
 RULES = (
@@ -34,4 +39,4 @@ def route(text: str) -> Route:
 
 if __name__ == "__main__":
     decision = route(" ".join(sys.argv[1:]))
-    print(f"task={decision.task}\nconfidence={decision.confidence}\nsystem={decision.system_prompt}")
+    print(json.dumps(decision.as_dict(), indent=2))
